@@ -8,7 +8,7 @@ Feature: Get account information from ParaBank
 
 
   Scenario:Validate customer accounts schema and financial integrity
-    Given path 'customers', 'customerId', 'accounts'
+    Given path 'customers'
     And path 'john' //userName
     And path 'demo' //password
     When method GET
