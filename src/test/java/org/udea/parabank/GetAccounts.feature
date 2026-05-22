@@ -5,6 +5,7 @@ Feature: Get account information from ParaBank
     * url baseUrl
     * header Accept = 'application/json'
     * def customerId = 12212
+    * def invalidCustomerId = 12345
 
 
   Scenario:Validate customer accounts schema and financial integrity
@@ -28,3 +29,11 @@ Feature: Get account information from ParaBank
 
     # Validate customerId consistency
     And match each response[*].customerId == '#? _ == customerId'
+
+
+    Scenario: Fail when customer does not exist
+    Given path 'customers', invalidCustomerId, 'accounts'
+    When method GET
+    Then status 404
+
+    And match response == 'Could not find customer #12345'
