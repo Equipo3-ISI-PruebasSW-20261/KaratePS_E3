@@ -27,4 +27,4 @@ Feature: Get account information from ParaBank
     And match each response[*].type == '#? _ == "CHECKING" || _ == "SAVINGS"'
 
     # Validate customerId consistency
-    And match each response[*].customerId contains customerId
+    And match each response[*].customerId == '#? _ == customerId'
