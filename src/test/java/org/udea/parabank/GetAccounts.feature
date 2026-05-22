@@ -8,9 +8,7 @@ Feature: Get account information from ParaBank
 
 
   Scenario:Validate customer accounts schema and financial integrity
-    Given path 'customers'
-    And path 'john' //userName
-    And path 'demo' //password
+    Given path 'customers',customerId, 'accounts'
     When method GET
     Then status 200
     And match header Content-Type contains 'application/json'
