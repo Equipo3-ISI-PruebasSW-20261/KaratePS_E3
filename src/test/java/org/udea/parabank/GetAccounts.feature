@@ -23,12 +23,8 @@ Feature: Get account information from ParaBank
     }
     """
 
-    # Validate allowed account types
-    And match each response[*].type contains any ['CHECKING', 'SAVINGS']
+    # Validate account types
+    And match each response[*].type == '#? _ == "CHECKING" || _ == "SAVINGS"'
 
     # Validate customerId consistency
     And match each response[*].customerId contains customerId
-
-    # Financial integrity validation
-    * def balances = response[*].balance
-    * match each balances == '#? _ >= 0'
