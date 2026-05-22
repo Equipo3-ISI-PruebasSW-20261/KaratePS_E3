@@ -8,20 +8,12 @@ Feature: Get account information from ParaBank
 
 
   Scenario:Validate customer accounts schema and financial integrity
-    Given path 'customers'
+    Given path 'customers', 'customerId', 'accounts'
     And path 'john' //userName
     And path 'demo' //password
     When method GET
     Then status 200
-    And match response ==
- 
-    }
-   Given path 'customers', customerId, 'accounts'
-    When method GET
-    Then status 200
-
     And match header Content-Type contains 'application/json'
-
     # Schema validation
     And match each response ==
     """
@@ -32,9 +24,13 @@ Feature: Get account information from ParaBank
       balance: '#number'
     }
     """
+
+    # Validate allowed account types
     And match each response[*].type contains any ['CHECKING', 'SAVINGS']
 
+    # Validate customerId consistency
     And match each response[*].customerId contains customerId
 
+    # Financial integrity validation
     * def balances = response[*].balance
     * match each balances == '#? _ >= 0'
