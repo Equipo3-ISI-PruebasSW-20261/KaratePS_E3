@@ -34,6 +34,6 @@ Feature: Get account information from ParaBank
     Scenario: Fail when customer does not exist
     Given path 'customers', invalidCustomerId, 'accounts'
     When method GET
-    Then status 404
+    Then status 400
 
     And match response == 'Could not find customer #12345'
