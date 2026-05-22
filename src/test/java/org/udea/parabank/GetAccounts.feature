@@ -4,7 +4,7 @@ Feature: Get account information from ParaBank
   Background:
     * url baseUrl
     * header Accept = 'application/json'
-    * def customerId = '12212'
+    * def customerId = 12212
 
 
   Scenario:Validate customer accounts schema and financial integrity
