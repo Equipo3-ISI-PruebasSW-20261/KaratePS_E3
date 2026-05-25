@@ -1,0 +1,39 @@
+@parabank_account
+Feature: Get account information from ParaBank
+
+  Background:
+    * url baseUrl
+    * header Accept = 'application/json'
+    * def customerId = 12212
+    * def invalidCustomerId = 12345
+
+
+  Scenario:Validate customer accounts schema and financial integrity
+    Given path 'customers',customerId, 'accounts'
+    When method GET
+    Then status 200
+    And match header Content-Type contains 'application/json'
+    # Schema validation
+    And match each response ==
+    """
+    {
+      id: '#number',
+      customerId: '#number',
+      type: '#string',
+      balance: '#number'
+    }
+    """
+
+    # Validate account types
+    And match each response[*].type == '#? _ == "CHECKING" || _ == "SAVINGS"'
+
+    # Validate customerId consistency
+    And match each response[*].customerId == '#? _ == customerId'
+
+
+    Scenario: Fail when customer does not exist
+    Given path 'customers', invalidCustomerId, 'accounts'
+    When method GET
+    Then status 400
+
+    And match response == 'Could not find customer #12345'
