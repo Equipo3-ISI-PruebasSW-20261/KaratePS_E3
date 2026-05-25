@@ -5,7 +5,7 @@ Feature: Autenticación y Persistencia de Sesión en Parabank
     * url baseUrl
     * header Accept = 'application/json'
 
-  Scenario: Login exitoso - Validar respuesta 200 y esquema del usuario
+  Scenario: Login exitoso - Validar 200 OK y Content-Type application/json
     Given path 'login', 'john', 'demo'
     When method GET
     Then status 200
@@ -39,14 +39,14 @@ Feature: Autenticación y Persistencia de Sesión en Parabank
     * def cookieString = setCookieHeader + ''
     And match cookieString contains 'JSESSIONID'
 
-  Scenario: Seguridad - Credenciales incorrectas retornan 401 Unauthorized
+  Scenario: Seguridad - Credenciales incorrectas deben retornar 401 Unauthorized
     Given path 'login', 'invalidUser', 'wrongPassword'
     When method GET
     Then status 401
     And match response == '#string'
     And match response == '#? _.length > 0'
 
-  Scenario: Seguridad - Password incorrecto para usuario válido retorna 401
+  Scenario: Seguridad - Password incorrecto para usuario válido debe retornar 401
     Given path 'login', 'john', 'wrongPassword'
     When method GET
     Then status 401
