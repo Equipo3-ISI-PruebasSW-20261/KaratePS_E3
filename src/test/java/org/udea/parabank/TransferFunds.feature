@@ -97,5 +97,5 @@ Feature: Transfer funds in Parabank
     And param amount = val_amount
     When method POST
     Then status 400
-  And match response contains val_fromAccountIdError
-  And match response contains val_toAccountIdError
+    And match response contains val_fromAccountIdError
+    And match response contains val_toAccountIdError
