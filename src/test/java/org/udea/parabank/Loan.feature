@@ -15,21 +15,19 @@ Feature: Loan Request with Risk Assessment
     When method POST
     Then status 200
 
-    # Validate response structure
     And match response contains
     """
     {
       loanProviderName: '#string',
-      responseDate: '#string',
+      responseDate: '#number',
       approved: '#boolean'
     }
     """
 
-    # Validate responseDate
     * def responseDate = response.responseDate
 
     And assert responseDate != null
-    And assert responseDate.length > 0
+    And assert responseDate > 0
 
     * print 'Response Date:', responseDate
 
@@ -42,10 +40,10 @@ Feature: Loan Request with Risk Assessment
     When method POST
     Then status 200
 
-    And match response.responseDate == '#string'
+    And match response.responseDate == '#number'
 
     And assert response.responseDate != null
-    And assert response.responseDate.length > 0
+    And assert response.responseDate > 0
 
     * print 'Loan Amount:', <loanAmount>
     * print 'Down Payment:', <downPaymentAmount>
@@ -67,9 +65,9 @@ Feature: Loan Request with Risk Assessment
     When method POST
     Then status 200
 
-    And match response.responseDate == '#string'
+    And match response.responseDate == '#number'
 
     And assert response.responseDate != null
-    And assert response.responseDate.length > 0
+    And assert response.responseDate > 0
 
     * print 'Response:', response

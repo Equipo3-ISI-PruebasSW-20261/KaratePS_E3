@@ -34,12 +34,12 @@ Feature: Bill Pay Robustness and Exception Handling
     When method POST
     Then status 200
 
-    # Validate no internal server error
     And match responseStatus != 500
 
-    # Validate no stack trace exposed
-    And match response !contains 'Exception'
-    And match response !contains 'at com.'
+    * def responseText = response + ''
+
+    And match responseText !contains 'Exception'
+    And match responseText !contains 'at com.'
 
   Scenario Outline: Validate edge case amounts
     Given path 'billpay'
@@ -63,7 +63,11 @@ Feature: Bill Pay Robustness and Exception Handling
     Then status 200
 
     And match responseStatus != 500
-    And match response !contains 'Exception'
+
+    * def responseText = response + ''
+
+    And match responseText !contains 'Exception'
+    And match responseText !contains 'at com.'
 
     * print 'Response:', response
 
