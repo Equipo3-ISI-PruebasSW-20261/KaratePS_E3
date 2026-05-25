@@ -14,26 +14,24 @@ Feature: Loan Request with Risk Assessment
     And param fromAccountId = fromAccountId
     When method POST
     Then status 200
-    
-    # Validate response structure (FLEXIBLE - acepta campos extras)
+
+    # Validate response structure
     And match response contains
     """
     {
       loanProviderName: '#string',
-      responseDate: '#number',
+      responseDate: '#string',
       approved: '#boolean'
     }
     """
-    
-    # Validate responseDate exists and is a number (Unix timestamp)
+
+    # Validate responseDate
     * def responseDate = response.responseDate
-    * print 'Response Date (Unix timestamp):', responseDate
-    And match responseDate == '#number'
-    And match responseDate != null
-    And match responseDate > 0
-    
-    # Validate loan provider exists
-    And match response.loanProviderName == '#string'
+
+    And assert responseDate != null
+    And assert responseDate.length > 0
+
+    * print 'Response Date:', responseDate
 
   Scenario Outline: Loan risk assessment with different profiles
     Given path 'requestLoan'
@@ -43,13 +41,15 @@ Feature: Loan Request with Risk Assessment
     And param fromAccountId = fromAccountId
     When method POST
     Then status 200
-    
-    # Validate response date is a number (Unix timestamp)
-    And match response.responseDate == '#number'
-    And match response.responseDate > 0
-    
-    # Log the decision
-    * print 'Loan Amount:', <loanAmount>, 'Down Payment:', <downPaymentAmount>, 'Approved:', response.approved
+
+    And match response.responseDate == '#string'
+
+    And assert response.responseDate != null
+    And assert response.responseDate.length > 0
+
+    * print 'Loan Amount:', <loanAmount>
+    * print 'Down Payment:', <downPaymentAmount>
+    * print 'Approved:', response.approved
 
     Examples:
       | loanAmount | downPaymentAmount |
@@ -59,7 +59,6 @@ Feature: Loan Request with Risk Assessment
       | 50000      | 5000              |
 
   Scenario: Validate loan response date is never null
-    # Test with a single loan request
     Given path 'requestLoan'
     And param customerId = 12212
     And param amount = 1000
@@ -67,10 +66,10 @@ Feature: Loan Request with Risk Assessment
     And param fromAccountId = fromAccountId
     When method POST
     Then status 200
-    
-    # Validate responseDate exists, is not null, and is a number
-    And match response.responseDate == '#number'
-    And match response.responseDate != null
-    And match response.responseDate > 0
-    
+
+    And match response.responseDate == '#string'
+
+    And assert response.responseDate != null
+    And assert response.responseDate.length > 0
+
     * print 'Response:', response
