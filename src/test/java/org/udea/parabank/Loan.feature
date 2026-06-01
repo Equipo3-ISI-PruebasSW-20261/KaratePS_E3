@@ -19,13 +19,13 @@ Feature: Loan Request with Risk Assessment
     """
     {
       loanProviderName: '#string',
-      responseDate: '#number',
+      responseDate: '#string',
       approved: '#boolean'
     }
     """
 
     And match response.responseDate != null
-    And match response.responseDate == '#number'
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$'
 
   Scenario Outline: Loan risk assessment with different profiles
     Given path 'requestLoan'
@@ -37,7 +37,8 @@ Feature: Loan Request with Risk Assessment
     Then status 200
 
     And match response.responseDate != null
-    And match response.responseDate == '#number'
+    And match response.responseDate == '#string'
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$'
 
     Examples:
       | loanAmount | downPaymentAmount |
@@ -56,4 +57,5 @@ Feature: Loan Request with Risk Assessment
     Then status 200
 
     And match response.responseDate != null
-    And match response.responseDate == '#number'
+    And match response.responseDate == '#string'
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$'
