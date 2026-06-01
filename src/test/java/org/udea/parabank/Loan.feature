@@ -19,17 +19,13 @@ Feature: Loan Request with Risk Assessment
     """
     {
       loanProviderName: '#string',
-      responseDate: '#number',
+      responseDate: '#string',
       approved: '#boolean'
     }
     """
 
-    * def responseDate = response.responseDate
-
-    And assert responseDate != null
-    And assert responseDate > 0
-
-    * print 'Response Date:', responseDate
+    And match response.responseDate != null
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z$'
 
   Scenario Outline: Loan risk assessment with different profiles
     Given path 'requestLoan'
@@ -40,14 +36,9 @@ Feature: Loan Request with Risk Assessment
     When method POST
     Then status 200
 
-    And match response.responseDate == '#number'
-
-    And assert response.responseDate != null
-    And assert response.responseDate > 0
-
-    * print 'Loan Amount:', <loanAmount>
-    * print 'Down Payment:', <downPaymentAmount>
-    * print 'Approved:', response.approved
+    And match response.responseDate != null
+    And match response.responseDate == '#string'
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z$'
 
     Examples:
       | loanAmount | downPaymentAmount |
@@ -65,9 +56,6 @@ Feature: Loan Request with Risk Assessment
     When method POST
     Then status 200
 
-    And match response.responseDate == '#number'
-
-    And assert response.responseDate != null
-    And assert response.responseDate > 0
-
-    * print 'Response:', response
+    And match response.responseDate != null
+    And match response.responseDate == '#string'
+    And match response.responseDate == '#regex ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z$'

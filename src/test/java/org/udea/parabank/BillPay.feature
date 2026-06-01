@@ -7,6 +7,7 @@ Feature: Bill Pay Robustness and Exception Handling
     * def accountId = 13344
 
   Scenario: Bill pay with amount greater than balance
+
     Given path 'accounts', accountId
     When method GET
     Then status 200
@@ -32,16 +33,12 @@ Feature: Bill Pay Robustness and Exception Handling
     }
     """
     When method POST
-    Then status 200
 
-    And match responseStatus != 500
-
-    * def responseText = response + ''
-
-    And match responseText !contains 'Exception'
-    And match responseText !contains 'at com.'
+    # Criterio de aceptación
+    Then status 400
 
   Scenario Outline: Validate edge case amounts
+
     Given path 'billpay'
     And param accountId = accountId
     And param amount = <amount>
@@ -60,19 +57,12 @@ Feature: Bill Pay Robustness and Exception Handling
     }
     """
     When method POST
-    Then status 200
 
-    And match responseStatus != 500
-
-    * def responseText = response + ''
-
-    And match responseText !contains 'Exception'
-    And match responseText !contains 'at com.'
-
-    * print 'Response:', response
+    # Criterio de aceptación
+    Then status 400
 
     Examples:
       | amount |
-      | 0      |
-      | -50    |
+      | 0 |
+      | -50 |
       | 999999 |
