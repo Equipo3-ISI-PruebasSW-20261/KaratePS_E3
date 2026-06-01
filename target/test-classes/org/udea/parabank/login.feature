@@ -1,16 +1,15 @@
 @parabank_login
-Feature: Login to Parabank
+Feature: Autenticación y Persistencia de Sesión en Parabank
 
   Background:
     * url baseUrl
     * header Accept = 'application/json'
 
-  Scenario: Customer Login
-    Given path 'login'
-    And path 'john' //userName
-    And path 'demo' //password
+  Scenario: Login exitoso - Validar 200 OK y Content-Type application/json
+    Given path 'login', 'john', 'demo'
     When method GET
     Then status 200
+    And match header Content-Type contains 'application/json'
     And match response ==
     """
     {
@@ -27,3 +26,46 @@ Feature: Login to Parabank
        "ssn": '#string'
     }
     """
+    And match response.id == '#? _ > 0'
+    And match response.firstName == '#? _.length > 0'
+
+  Scenario: Validación técnica - JSESSIONID presente en Set-Cookie
+    Given path 'login', 'john', 'demo'
+    When method GET
+    Then status 200
+    * def setCookieHeader = responseHeaders['Set-Cookie']
+    * print 'Set-Cookie Header:', setCookieHeader
+    And match setCookieHeader == '#notnull'
+    * def cookieString = setCookieHeader + ''
+    And match cookieString contains 'JSESSIONID'
+
+  Scenario: Seguridad - Credenciales incorrectas deben retornar 401 Unauthorized
+    Given path 'login', 'invalidUser', 'wrongPassword'
+    When method GET
+    Then status 401
+    And match response == '#string'
+    And match response == '#? _.length > 0'
+
+  Scenario: Seguridad - Password incorrecto para usuario válido debe retornar 401
+    Given path 'login', 'john', 'wrongPassword'
+    When method GET
+    Then status 401
+
+  Scenario: Persistencia de sesión - JSESSIONID reutilizable en petición subsiguiente
+    # Paso 1: Login y captura de sesión
+    Given path 'login', 'john', 'demo'
+    When method GET
+    Then status 200
+    * def customerId = response.id
+    * def rawCookie = responseHeaders['Set-Cookie']
+    * def sessionCookie = rawCookie == null ? '' : (rawCookie + '').replace(/;.*/, '')
+    * print 'Customer ID:', customerId
+    * print 'Session Cookie:', sessionCookie
+
+    # Paso 2: Reutilizar JSESSIONID en petición subsiguiente
+    Given path 'customers', customerId, 'accounts'
+    And header Cookie = sessionCookie
+    When method GET
+    Then status 200
+    And match response == '#array'
+    And match each response[*].customerId == customerId
